@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color:darkblue;
+        }
+
+        h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: transparent;
+            background-image: linear-gradient(45deg, #ff6347, #4682b4);
+            background-clip: text;
+            -webkit-background-clip: text;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .dabba {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 320px;
+            max-height: 320px;
+            width: 90vw;
+            height: 90vw;
+        }
+
+        .box {
+            width: 100%;
+            height: 100%;
+            background-color: #add8e6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #333;
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .box:hover {
+            background-color: #87ceeb;
+            transform: scale(1.05);
+        }
+
+        .result {
+            margin: 20px 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: blanchedalmond;
+        }
+
+        #restart {
+            background-color: #4682b4;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        #restart:hover {
+            background-color: #5a9bd4;
+        }
+
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 2rem;
+            }
+
+            .result {
+                font-size: 1.2rem;
+            }
+
+            #restart {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h2>The Tic Tac Toe Game</h2>
+    <div class="dabba" id="dabba"></div>
+    <div class="result" id="result"></div>
+    <button id="restart" onclick="restart()">Restart</button>
+
+    <script>
+        const mainDabba = document.getElementById("dabba");
+        const result = document.getElementById("result");
+        let count = 1;
+
+        // Create the boxes
+        for (let x = 0; x < 9; x++) {
+            const box = document.createElement("div");
+            box.className = `box`;
+            box.setAttribute("index", x);//har ek box ka index define kr dega
+            mainDabba.appendChild(box);
+        }
+
+        const boxes = document.querySelectorAll(".box");
+
+        boxes.forEach(box => {
+            box.addEventListener("click", function () {
+                if (box.textContent === "") {
+                    box.textContent = count % 2 === 0 ? "O" : "X";
+                    count++;
+                    checkWinner();
+                }
+            });
+        });
+
+        function checkWinner() {
+            const b = Array.from(boxes).map((box) => box.textContent);
+            const winningCombination = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6],
+            ];
+
+            for (let combination of winningCombination) {
+                const [a, bIndex, c] = combination;
+                if (b[a] && b[a] === b[bIndex] && b[a] === b[c]) {
+                    result.textContent = `Player ${b[a] === 'X' ? 1 : 2} wins! 🎉`;
+                    highlightWinningBoxes(combination);
+                    return;
+                }
+            }
+
+            if (b.every((cell) => cell)) {//jab sare cover ho jaye
+                result.textContent = "It's a draw! 🤝";
+            }
+        }
+
+        function highlightWinningBoxes(combination) {
+            combination.forEach(index => {
+                boxes[index].style.backgroundColor = "#90ee90";
+                boxes[index].style.transform = "scale(1.1)";
+            });
+        }
+
+        function restart() {
+            // boxes.forEach(box => {
+            //     box.textContent = "";
+            //     box.style.backgroundColor = "#add8e6";
+            //     box.style.transform = "scale(1)";
+            // });
+            location.reload();
+
+            count = 1;
+            result.textContent = "";
+        }
+    </script>
+</body>
+
+</html>
